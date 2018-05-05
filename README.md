@@ -1,6 +1,6 @@
 # PRG -- Ročníkový projekt, 3. ročník
 # Název projektu: Hra had
-# Zadání:
+## Zadání:
 Naprogramujte hru had. Hlavním cílem této hry je ovládat hada a dosáhnout co největší délky. Při každém spolknutí jídla se had zvětší.
 Had bude mít dvě varianty, jedna bude mít ,,nekonečnou´´ plochu, kdy se při zanoření na jedné straně had vynoří na druhé.
 Druhá varianta bude mít ohraničenou plochu a při nárazu hra skončí. U obou variant hra končí v případě, že do sebe had narazí.
