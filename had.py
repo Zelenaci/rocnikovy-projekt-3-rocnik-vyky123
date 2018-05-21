@@ -7,7 +7,7 @@ Created on Sat May  5 20:38:49 2018
 
 
 import pyglet
-from pyglet.window.key import MOD_CTRL, A, B, C, DOWN, UP, LEFT, RIGHT, S
+from pyglet.window.key import MOD_CTRL, A, B, C, DOWN, UP, LEFT, RIGHT, W, S, D
 from pyglet.window.mouse import LEFT as mLEFT
 from pyglet.window.mouse import RIGHT as mRIGHT
 from random import randint
@@ -21,23 +21,22 @@ bila = pyglet.image.load("bila.png")
 window = pyglet.window.Window(800, 600)
 batch = pyglet.graphics.Batch() 
 seznam = list()
-
+typhry=1
 
 
 CTVER = 8   #konstanta pro velikost čtverce
 had = [(1,2)]
 jidlo = [(6,8)]
 
-rychlost = 10
 klavesy = set()
 
 
 class Had(object): 
-    def __init__(self, obrazek, x=None, y=None, r=None, rychlost=10,
+    def __init__(self, obrazek, x=400, y=300, r=None, rychlost=0, sirka=30, vyska=30,
                  window=window, batch=batch):
-        self.image = pyglet.image.load("bila.png")
-        self.image.width = 30
-        self.image.height = 30
+        self.image = pyglet.image.load(obrazek)
+        self.image.width = sirka
+        self.image.height = vyska
         self.image.anchor_x = self.image.width // 2
         self.image.anchor_y = self.image.height // 2
         self.sprite = pyglet.sprite.Sprite(self.image, batch=batch)
@@ -48,12 +47,16 @@ class Had(object):
         if r:
             self._rotation = r
         else:
-            self._rotation = 90
+            self._rotation = 0
         self.sprite.rotation = self._rotation
         
         self._rychlost = rychlost
         seznam.append(self)
         
+        self.keys = dict(left=False, right=False, up=False)
+              
+        
+
     def hranice(self):
         min_x = -self.image.width // 2
         min_y = -self.image.height // 2
@@ -66,8 +69,8 @@ class Had(object):
         if self._y < min_y:
             self._y = max_y
         elif self._y > max_y:
-            self._y = min_y
-   
+           self._y = min_y   
+    
 
     def tik(self, t):
         self.sprite.x = self.sprite.x + self._rychlost*t*sin(pi*self._rotation/180)
@@ -75,12 +78,17 @@ class Had(object):
         self.sprite.y = self.sprite.y + self._rychlost*t*cos(pi*self._rotation/180)
         self._y = self.sprite.y
         self.hranice()
-        print("x: ",self._x)
-        print("y: ",self._y)
-
-
-    
-        
+        print("x: ",kostka._x)
+        print("y: ",kostka._y)
+        if typhry == 1:
+            if kostka._x < 21:
+                window.close()
+            if kostka._y < 21:
+                 window.close()
+            if kostka._x > 779:
+                window.close()
+            if kostka._y > 579:
+                window.close()
 
     
 
@@ -95,8 +103,13 @@ def on_draw():
   #      cervena.blit(random.randint(3 + CTVER*2, 797 - CTVER*2), random.randint(3 + CTVER, 597 - CTVER*2), width=CTVER, height=CTVER)
 #
 
+if typhry ==1:
+    okrajL = Had(obrazek="bila.png", x=1, y=300, vyska=600, sirka=20)
+    okrajP = Had(obrazek="bila.png", x=799, y=300, vyska=600, sirka=20, r=180)
+    okrajH = Had(obrazek="bila.png", x=400, y=599, vyska=20, sirka=800)
+    okrajD = Had(obrazek="bila.png", x=400, y=1, vyska=20, sirka=800, r=180)
+kostka = Had(obrazek="zelena.png", rychlost=40, r=180, x=400, y=300)
 
-kostka = Had("bila.png", rychlost=30, r=180, x=400, y=300)
 
 
 def tik(t):
@@ -117,25 +130,18 @@ print(kostka._x, kostka._y)
 def on_key_press(sym, mod):
     global klavesy
     klavesy.add(sym)
+    if sym == UP or sym == W:
+        kostka._rotation = 0
     
-    global uhel
-    global rychlost
-    if sym == 65362:
-        uhel = 0
-        kostka.sprite.r = 0
+    if sym == DOWN or sym == S:
+        kostka._rotation = 180
     
-    elif sym == 65363:
-        uhel = 90
-        kostka.sprite.r = 90
+    if sym == LEFT or sym == A:
+        kostka._rotation = -90
     
-    elif sym == 65364:
-        uhel = 180
-        kostka.sprite.r = 180
-    
-    elif sym == 65361:
-        uhel = 270
-        kostka.sprite.r = -90
- 
+    if sym == RIGHT or sym == D:
+        kostka._rotation = 90
+        
     print(sym, mod)
 
 pyglet.clock.schedule_interval(tik, 1/30)  
