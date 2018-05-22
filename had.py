@@ -6,7 +6,7 @@ Created on Sat May  5 20:38:49 2018
 """
 
 
-import pyglet
+import pyglet, time
 from pyglet.window.key import MOD_CTRL, A, B, C, DOWN, UP, LEFT, RIGHT, W, S, D
 from pyglet.window.mouse import LEFT as mLEFT
 from pyglet.window.mouse import RIGHT as mRIGHT
@@ -27,10 +27,53 @@ typhry=1
 CTVER = 8   #konstanta pro velikost čtverce
 had = [(1,2)]
 jidlo = [(6,8)]
-
+xold = 10
+yold = 10
 klavesy = set()
 
 
+def konec():
+    time.sleep(2)   
+    window.close()
+
+class Hrac(object):
+    def __init__(self):
+        self.jidlo = []
+ #       self.jidlonew()
+ #       self.jidlonew()
+        self.had = [(0, 0), (1, 0)]
+        self.sirka = 30
+        self.vyska = 30
+        self.smer = 0, 1
+        
+       
+        
+        
+        
+    def pohyb(self):
+        old_x, old_y = self.had[-1]
+        dir_x, dir_y = self.smer
+        
+        new_x = old_x + dir_x
+        new_y = old_y + dir_y
+
+        new_x = new_x % self.width
+        new_y = new_y % self.height
+
+        hlava = new_x, new_y
+        if hlava in self.had:
+            konec
+        self.had.append(hlava)
+
+        if hlava in self.jidlo:
+            self.jidlo.remove(hlava)
+#            self.jidlonew()
+        else:
+            del self.had[0]
+            
+            
+#    def jidlonew:
+        
 class Had(object): 
     def __init__(self, obrazek, x=400, y=300, r=None, rychlost=0, sirka=30, vyska=30,
                  window=window, batch=batch):
@@ -62,15 +105,15 @@ class Had(object):
         min_y = -self.image.height // 2
         max_x = 800 + self.image.width // 2
         max_y = 600 + self.image.height // 2
-        if self._x < min_x:
-            self._x = max_x
-        elif self._x > max_x:
-            self._x = min_x
-        if self._y < min_y:
-            self._y = max_y
-        elif self._y > max_y:
-           self._y = min_y   
-    
+        if kostka._x < min_x:
+            kostka._x = max_x
+        elif kostka._x > max_x:
+            kostka._x = min_x
+        if kostka._y < min_y:
+            kostka._y = max_y
+        elif kostka._y > max_y:
+           kostka._y = min_y   
+           
 
     def tik(self, t):
         self.sprite.x = self.sprite.x + self._rychlost*t*sin(pi*self._rotation/180)
@@ -78,20 +121,28 @@ class Had(object):
         self.sprite.y = self.sprite.y + self._rychlost*t*cos(pi*self._rotation/180)
         self._y = self.sprite.y
         self.hranice()
-        print("x: ",kostka._x)
-        print("y: ",kostka._y)
+        #print("x: ",kostka._x)
+        #print("y: ",kostka._y)
         if typhry == 1:
             if kostka._x < 21:
-                window.close()
+                konec
             if kostka._y < 21:
-                 window.close()
+                konec
             if kostka._x > 779:
-                window.close()
+                konec
             if kostka._y > 579:
-                window.close()
+                konec
+        global xold
+        global yold
+        xold = kostka._x - 30
+        yold = kostka._y - 30
+        print("old: ",xold,yold)
+
+
 
     
-
+    
+    
 @window.event
 def on_draw():
     window.clear()
@@ -108,7 +159,8 @@ if typhry ==1:
     okrajP = Had(obrazek="bila.png", x=799, y=300, vyska=600, sirka=20, r=180)
     okrajH = Had(obrazek="bila.png", x=400, y=599, vyska=20, sirka=800)
     okrajD = Had(obrazek="bila.png", x=400, y=1, vyska=20, sirka=800, r=180)
-kostka = Had(obrazek="zelena.png", rychlost=40, r=180, x=400, y=300)
+kostka = Had(obrazek="zelena.png", rychlost=100, r=180, x=400, y=300)
+#ocas = Had(obrazek="cervena.png", rychlost=100,r=180 ,x=xold, y=yold, sirka=50,vyska=50)
 
 
 
@@ -132,7 +184,7 @@ def on_key_press(sym, mod):
     klavesy.add(sym)
     if sym == UP or sym == W:
         kostka._rotation = 0
-    
+
     if sym == DOWN or sym == S:
         kostka._rotation = 180
     
