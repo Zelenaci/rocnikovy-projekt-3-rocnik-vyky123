@@ -25,11 +25,6 @@ typhry=1
 
 
 CTVER = 8   #konstanta pro velikost čtverce
-had = [(1,2)]
-jidlo = [(6,8)]
-xold = 10
-yold = 10
-klavesy = set()
 
 
 def konec():
@@ -38,28 +33,33 @@ def konec():
 
 class Hrac(object):
     def __init__(self):
+        self.had = [(50, 6), (60, 6)]
         self.jidlo = []
         self.jidlonew()
-        self.jidlonew()
-        self.had = [(0, 0), (1, 0)]
+        
         self.sirka = 30
         self.vyska = 30
-        self.smer = 0, 1
+        self.smer1 = 0
+        self.smer2 = 1
         self.vybs= []
-        
+
+
     def pohyb(self):
-        novy_smer = self.vybs[0]
-        del self.vybs[0]
+        if self.vybs:
+            print(self.vybs)
+            novy_smer = self.vybs[0]
+            del self.vybs[0]
+            old_x, old_y = self.had[-1]
+            new_x = self.smer1
+            new_y = self.smer2
+            if (old_x, old_y) != (-new_x, -new_y):
+                self.smer = novy_smer
+
+
         old_x, old_y = self.had[-1]
-        new_x, new_y = self.smer
-        if (old_x, old_y) != (-new_x, -new_y):
-            self.smer = novy_smer
-
-        old_x = self.had[-1]
-        old_y = self.had[-1]
-
-        smer_x = self.smer
-        smer_y = self.smer
+       
+        smer_x = self.smer1
+        smer_y = self.smer2
 
         new_x = old_x + smer_x
         new_y = old_y + smer_y
@@ -69,24 +69,39 @@ class Hrac(object):
 
         hlava = new_x, new_y
         if hlava in self.had:
-            konec
+            konec()
         self.had.append(hlava)
 
         if hlava in self.jidlo:
             self.jidlo.remove(hlava)
             self.jidlonew()
-        else:
-            del self.had[0]
-
-
+     #   else:
+     #       del self.had[0]
+        
+        if typhry == 0:             #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            if new_x < 0:
+                konec()
+            if new_y < 70:
+                konec()
+            if new_x > window.width - 21:
+                konec()
+            if new_y > window.height - 21:
+                konec()
+        
+            
+            
     def jidlonew(self):
         jx = randint(50, window.width - 50)
         jy = randint(50, window.height - 50)
+        jpozice = jx, jy
         if jx and jy not in self.had:
-            self.jidlo.append(jx,jy)
+            self.jidlo.append(jpozice)
             return
-
-
+        
+hrac = Hrac()
+hrac.width = window.width // CTVER
+hrac.height = window.height // CTVER        
+      
 class Had(object): 
     def __init__(self, obrazek, x=400, y=300, r=None, rychlost=0, sirka=30, vyska=30,
                  window=window, batch=batch):
@@ -111,20 +126,6 @@ class Had(object):
 
 
 
-    def hranice(self):
-        min_x = -self.image.width // 2
-        min_y = -self.image.height // 2
-        max_x = 800 + self.image.width // 2
-        max_y = 600 + self.image.height // 2
-        if kostka._x < min_x:
-            kostka._x = max_x
-        elif kostka._x > max_x:
-            kostka._x = min_x
-        if kostka._y < min_y:
-            kostka._y = max_y
-        elif kostka._y > max_y:
-           kostka._y = min_y   
-
 
     def tik(self, t):
         self.sprite.x = self.sprite.x + self._rychlost*t*sin(pi*self._rotation/180)
@@ -135,20 +136,18 @@ class Had(object):
 
         if typhry == 1:
             if kostka._x < 21:
-                konec
+                konec()
             if kostka._y < 21:
-                konec
+                konec()
             if kostka._x > window.width - 21:
-                konec
+                konec()
             if kostka._y > window.height - 21:
-                konec
+                konec()
         print("s: ",kostka._x,kostka._y)
 
 
 
-state = Hrac()
-state.width = window.width // CTVER
-state.height = window.height // CTVER
+
 
 
    
@@ -156,14 +155,14 @@ state.height = window.height // CTVER
 @window.event
 def on_draw():
     window.clear()
+    batch.draw()
 
 
-
-    for _x, _y in had:
+    for _x, _y in hrac.had:
         print(_x,_y)
         zelena.blit(_x * CTVER, _y * CTVER, width=CTVER, height=CTVER)
-    for _x, _y in jidlo:
-        cervena.blit(_x * CTVER, _y * CTVER, width=CTVER, height=CTVER)
+    for jx, jy in hrac.jidlo:
+        cervena.blit(jx * CTVER, jy * CTVER, width=CTVER, height=CTVER)
     #    zelena.blit(400 - CTVER, 300 - CTVER, width=CTVER*4, height=CTVER)  # -CTVER/2 slouží k tomu, aby čtverec byl uprostřed
 #
  #   for x, y in jidlo:
@@ -178,7 +177,7 @@ if typhry ==1:
     okrajP = Had(obrazek="bila.png", x=799, y=300, vyska=600, sirka=20, r=180)
     okrajH = Had(obrazek="bila.png", x=400, y=599, vyska=20, sirka=800)
     okrajD = Had(obrazek="bila.png", x=400, y=1, vyska=20, sirka=800, r=180)
-kostka = Had(obrazek="zelena.png", rychlost=100, r=180, x=400, y=300)    
+kostka = Had(obrazek="bila.png", rychlost=100, r=180, x=400, y=300)    
 #ocas = Had(obrazek="cervena.png", rychlost=100,r=180 ,x=xold, y=yold, sirka=50,vyska=50)
 
 
@@ -210,12 +209,13 @@ def on_key_press(sym, mod):
 
     if sym == RIGHT or sym == D:
         novy_smer = 1, 0
-    Hrac.vybs(novy_smer)
+    hrac.vybs.append(novy_smer)
     print(sym, mod)
 
-def pohyb(dt):
-    state.move()
 
-pyglet.clock.schedule_interval(pohyb, 1/30)  
+def pohyb(t):
+    hrac.pohyb()
+
+pyglet.clock.schedule_interval(pohyb, 1/2)  
 
 pyglet.app.run()
