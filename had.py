@@ -21,8 +21,7 @@ bila = pyglet.image.load("bila.png")
 window = pyglet.window.Window(800, 600)
 batch = pyglet.graphics.Batch() 
 seznam = list()
-typhry=1
-
+typhry=2
 
 CTVER = 8   #konstanta pro velikost čtverce
 
@@ -35,12 +34,10 @@ class Hrac(object):
     def __init__(self):
         self.had = [(50, 6), (60, 6)]
         self.jidlo = []
-        self.jidlonew()
-        
+        self.jidlonew() 
         self.sirka = 30
         self.vyska = 30
-        self.smer1 = 0
-        self.smer2 = 1
+        self.smer = 0, 1
         self.vybs= []
 
 
@@ -50,16 +47,14 @@ class Hrac(object):
             novy_smer = self.vybs[0]
             del self.vybs[0]
             old_x, old_y = self.had[-1]
-            new_x = self.smer1
-            new_y = self.smer2
+            new_x, new_y = self.smer
             if (old_x, old_y) != (-new_x, -new_y):
                 self.smer = novy_smer
 
 
         old_x, old_y = self.had[-1]
        
-        smer_x = self.smer1
-        smer_y = self.smer2
+        smer_x, smer_y = self.smer
 
         new_x = old_x + smer_x
         new_y = old_y + smer_y
@@ -75,19 +70,21 @@ class Hrac(object):
         if hlava in self.jidlo:
             self.jidlo.remove(hlava)
             self.jidlonew()
-     #   else:
-     #       del self.had[0]
+        else:
+            del self.had[0]
         
-        if typhry == 0:             #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-            if new_x < 0:
+        if typhry == 1 or typhry == 2:             #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            if new_x < 0 + 2:
                 konec()
-            if new_y < 70:
+            if new_y < 0 + 2:
                 konec()
-            if new_x > window.width - 21:
+            if new_x > 99 - 2:
                 konec()
-            if new_y > window.height - 21:
+            if new_y > 74 - 2:
                 konec()
-        
+        if typhry == 2:
+            if new_x > 47 and new_x < 52 and new_y > 35 and new_y < 40:
+                konec()
             
             
     def jidlonew(self):
@@ -172,12 +169,13 @@ def on_draw():
 
 
 
-if typhry ==1:
-    okrajL = Had(obrazek="bila.png", x=1, y=300, vyska=600, sirka=20)
-    okrajP = Had(obrazek="bila.png", x=799, y=300, vyska=600, sirka=20, r=180)
-    okrajH = Had(obrazek="bila.png", x=400, y=599, vyska=20, sirka=800)
-    okrajD = Had(obrazek="bila.png", x=400, y=1, vyska=20, sirka=800, r=180)
-kostka = Had(obrazek="bila.png", rychlost=100, r=180, x=400, y=300)    
+if typhry == 1 or typhry == 2:
+    okrajL = Had(obrazek="bila.png", x=1, y=300, vyska=600, sirka=30)
+    okrajP = Had(obrazek="bila.png", x=799, y=300, vyska=600, sirka=30, r=180)
+    okrajH = Had(obrazek="bila.png", x=400, y=599, vyska=30, sirka=800)
+    okrajD = Had(obrazek="bila.png", x=400, y=1, vyska=30, sirka=800, r=180)
+if typhry == 2:
+    kostka = Had(obrazek="bila.png", rychlost=100, r=180, x=400, y=303, vyska=33)    
 #ocas = Had(obrazek="cervena.png", rychlost=100,r=180 ,x=xold, y=yold, sirka=50,vyska=50)
 
 
@@ -192,7 +190,6 @@ def on_mouse_press(x, y, button, mod):
     print(x, y, button, mod)
 
 
-print(kostka._x, kostka._y)
 
 
 @window.event
@@ -213,9 +210,9 @@ def on_key_press(sym, mod):
     print(sym, mod)
 
 
-def pohyb(t):
+def tik(t):
     hrac.pohyb()
 
-pyglet.clock.schedule_interval(pohyb, 1/2)  
+pyglet.clock.schedule_interval(tik, 1/30)  
 
 pyglet.app.run()
