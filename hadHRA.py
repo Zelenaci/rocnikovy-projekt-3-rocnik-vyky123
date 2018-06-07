@@ -14,7 +14,6 @@ zelena = pyglet.image.load("zelena.png")
 cervena = pyglet.image.load("cervena.png")
 bila = pyglet.image.load("bila.png")
 
-
 window = pyglet.window.Window(800, 600)
 batch = pyglet.graphics.Batch() 
 seznam = list()
@@ -56,7 +55,6 @@ class Hrac(object):
         global stary_smer
         stary_smer = stary_smer
         if self.vybs:
-            print(self.vybs)
             novy_smer = self.vybs[0]
             del self.vybs[0]
             old_x, old_y = self.had[-1]
@@ -186,7 +184,6 @@ def on_draw():
     batch.draw()
 
     for _x, _y in hrac.had:
-        print(_x,_y)
         zelena.blit(_x * CTVER, _y * CTVER, width=CTVER, height=CTVER)
     for jx, jy in hrac.jidlo:
         cervena.blit(jx * CTVER, jy * CTVER, width=CTVER, height=CTVER)
@@ -209,11 +206,6 @@ if typhry == 3:
     rohPD = Had(obrazek="bila.png", x=799, y=1, vyska=30, sirka=250)
     rohPD2 = Had(obrazek="bila.png", x=799, y=1, vyska=188, sirka=30)
     
-    
-@window.event    
-def on_mouse_press(x, y, button, mod):
-    print(x, y, button, mod)
-
 
 
 @window.event
@@ -247,7 +239,6 @@ def on_key_press(sym, mod):
         stary_smer = novy_smer
         hrac.vybs.append(novy_smer)
         
-        print(sym, mod)
     except:
         pass
 
