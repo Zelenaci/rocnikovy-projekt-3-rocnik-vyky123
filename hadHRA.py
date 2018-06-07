@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat May  5 20:38:49 2018
+Created on Thu Jun  7 18:28:22 2018
 
-@author: Tom-PC
+@author: TomPC
 """
 
-
 import pyglet, time
-from pyglet.window.key import MOD_CTRL, A, B, C, DOWN, UP, LEFT, RIGHT, W, S, D
+from pyglet.window.key import  A, DOWN, UP, LEFT, RIGHT, W, S, D
 from random import randrange
-from math import cos, sin, pi, radians
+from math import cos, sin, pi
 
 zelena = pyglet.image.load("zelena.png")
 cervena = pyglet.image.load("cervena.png")
@@ -19,7 +18,21 @@ bila = pyglet.image.load("bila.png")
 window = pyglet.window.Window(800, 600)
 batch = pyglet.graphics.Batch() 
 seznam = list()
-typhry=3
+try:
+    typhry=int(input("Jaký typ hry chcete nastavit? Napište 0 pro neomezené pole, 1 pro ohraničené pole, 2 pro ohraničené pole se čtvercem uprostřed, 3 pro pole s rohy > "))
+    if typhry > 3 or typhry < 0:
+        print("Špatné číslo, nastavuji 0 (neomezené pole)")
+    FPS = int(input("Kolik snímků za sekundu chcete použít? 1 pro 15 snímků za sekundu (pomalejší), 2 pro 30 snímků za sekundu (rychlejší) > "))
+    if FPS == 1:
+        FPS = 15
+    elif FPS == 2:
+        FPS = 30
+    elif FPS != 1 or FPS != 2:
+        FPS = 15
+        print("Špatné číslo, nastavuji 15 snímků za sekundu")
+except:
+    print("Chyba při zadávání!")
+time.sleep(1)    
 stary_smer = 0, 1
 CTVER = 8   #konstanta pro velikost čtverce
 
@@ -74,7 +87,7 @@ class Hrac(object):
             del self.had[0]
         
         
-        if typhry == 1 or typhry == 2:             #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        if typhry == 1 or typhry == 2:
             if new_x < 2:
                 konec()
             if new_y < 2:
@@ -148,7 +161,6 @@ class Had(object):
 
 
 
-
     def tik(self, t):
         self.sprite.x = self.sprite.x + self._rychlost*t*sin(pi*self._rotation/180)
         self._x = self.sprite.x
@@ -167,28 +179,17 @@ class Had(object):
                 konec()
 
 
-
-   
     
 @window.event
 def on_draw():
     window.clear()
     batch.draw()
 
-
     for _x, _y in hrac.had:
         print(_x,_y)
         zelena.blit(_x * CTVER, _y * CTVER, width=CTVER, height=CTVER)
     for jx, jy in hrac.jidlo:
         cervena.blit(jx * CTVER, jy * CTVER, width=CTVER, height=CTVER)
-   
-    #    zelena.blit(400 - CTVER, 300 - CTVER, width=CTVER*4, height=CTVER)  # -CTVER/2 slouží k tomu, aby čtverec byl uprostřed
-#
- #   for x, y in jidlo:
-  #      cervena.blit(random.randint(3 + CTVER*2, 797 - CTVER*2), random.randint(3 + CTVER, 597 - CTVER*2), width=CTVER, height=CTVER)
-#
-
-
 
 
 if typhry == 1 or typhry == 2:
@@ -253,6 +254,6 @@ def on_key_press(sym, mod):
 def tik(t):
     hrac.pohyb()
 
-pyglet.clock.schedule_interval(tik, 1/30)  
+pyglet.clock.schedule_interval(tik, 1/FPS)  
 
 pyglet.app.run()
