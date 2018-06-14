@@ -59,8 +59,7 @@ class Hrac(object):
             del self.vybs[0]
             old_x, old_y = self.had[-1]
             new_x, new_y = self.smer
-            if (old_x, old_y) != (-new_x, -new_y):
-                self.smer = novy_smer
+            self.smer = novy_smer
 
 
         old_x, old_y = self.had[-1]
