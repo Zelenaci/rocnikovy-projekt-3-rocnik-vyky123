@@ -17,6 +17,7 @@ bila = pyglet.image.load("bila.png")
 window = pyglet.window.Window(800, 600)
 batch = pyglet.graphics.Batch() 
 seznam = list()
+        
 try:
     typhry=int(input("Jaký typ hry chcete nastavit? Napište 0 pro neomezené pole, 1 pro ohraničené pole, 2 pro ohraničené pole se čtvercem uprostřed, 3 pro pole s rohy > "))
     if typhry > 3 or typhry < 0:
@@ -34,7 +35,7 @@ except:
 time.sleep(1)    
 stary_smer = 0, 1
 CTVER = 8   #konstanta pro velikost čtverce
-
+skore = 0
 
 def konec():
     time.sleep(2)   
@@ -59,8 +60,7 @@ class Hrac(object):
             del self.vybs[0]
             old_x, old_y = self.had[-1]
             new_x, new_y = self.smer
-            if (old_x, old_y) != (-new_x, -new_y):
-                self.smer = novy_smer
+            self.smer = novy_smer
 
 
         old_x, old_y = self.had[-1]
@@ -81,6 +81,10 @@ class Hrac(object):
         if hlava in self.jidlo:
             self.jidlo.remove(hlava)
             self.jidlonew()
+            global skore
+            skore = skore + 1
+            print ("Skóre:", skore, end='\r'),
+
         else:
             del self.had[0]
         
@@ -241,6 +245,7 @@ def on_key_press(sym, mod):
         
     except:
         pass
+
 
 def tik(t):
     hrac.pohyb()
